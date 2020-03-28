@@ -3,16 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style//style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@9.0.1/public/assets/styles/choices.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Baloo+2|Baloo+Da+2&display=swap" rel="stylesheet">
     <title>News API</title>
 </head>
 <body>
     <main>
+        <a href="" class="btn-logout js-btn-logout">logout</a>
+        <span class="title title--main">news api</span>
+        <span class="title title--tiny js-user-details" style="display: none;"></span>
+
         <section class="forms">
-            <form action="" class="form-register js-form-register"></form>
-            <form action="" class="form-login js-form-login"></form>
-            <form action="" class="form-data js-form-data"></form>
+            <form action="" class="form-register js-form-register">
+                <span class="title title--form">register</span>
+
+                <div class="input-field">
+                    <input type="text" name="firstname_register" id="firstname_register" required>
+                    <label for="firstname_register">Firstname</label>
+                </div>
+
+                <div class="input-field">
+                    <input type="text" name="lastname_register" id="lastname_register" required>
+                    <label for="lastname_register">Lastname</label>
+                </div>
+
+                <div class="input-field">
+                    <input type="email" name="email_register" id="email_register" required>
+                    <label for="email_register">Email</label>
+                </div>
+
+                <div class="input-field">
+                    <input type="password" name="password_register" id="password_register" required>
+                    <label for="password_register">Password</label>
+                </div>
+
+                <div class="input-field">
+                    <input type="password" name="repeat_password_register" id="repeat_password_register" required>
+                    <label for="repeat_password_register">Repeat password</label>
+                </div>
+
+                <button type="submit" class="btn btn--brown"><span>register</span></button>
+            </form>
+
+            <form action="" class="form-login js-form-login">
+                <span class="title title--form">login</span>
+
+                <div class="input-field">
+                    <input type="email" name="email_login" id="email_login" required>
+                    <label for="email_login">Email</label>
+                </div>
+
+                <div class="input-field">
+                    <input type="password" name="password_login" id="password_login" required>
+                    <label for="password_login">Password</label>
+                </div>
+
+                <button type="submit" class="btn btn--brown"><span>login</span></button>
+            </form>
+
+            <div class="bookmarks js-bookmarks-wrapper" style="display: none;">
+                <span class="title title--bookmarks">Your bookmarks</span>
+                <div class="bookmarks__list js-bookmarks-list">
+                    <!-- <div class="bookmarks__list__item">
+                        <a href="" class="js-btn-bookmark">abc news</a>
+                        <button class="js-btn-delete-bookmark"></button>
+                    </div>
+                    <div class="bookmarks__list__item">
+                        <a href="" class="js-btn-bookmark">au news</a>
+                        <button class="js-btn-delete-bookmark"></button>
+                    </div>
+                    <div class="bookmarks__list__item">
+                        <a href="" class="js-btn-bookmark">fox news</a>
+                        <button class="js-btn-delete-bookmark"></button>
+                    </div>
+                    <div class="bookmarks__list__item">
+                        <a href="" class="js-btn-bookmark">cnn</a>
+                        <button class="js-btn-delete-bookmark"></button>
+                    </div>
+                    <div class="bookmarks__list__item">
+                        <a href="" class="js-btn-bookmark">bbc</a>
+                        <button class="js-btn-delete-bookmark"></button>
+                    </div> -->
+                </div>
+            </div>
+
+            <form action="" class="form-search js-form-search">
+                <span class="title title--form">search</span>
+
+                <select name="source_search" class="js-select-sources">
+                    <option value="">Select source...</option>
+                </select>
+                <input type="text" name="keywords_search" placeholder="Any keywords ?">
+                <div class="buttons">
+                    <button type="submit" class="btn btn--brown"><span>search</span></button>
+                    <button type="button" class="btn btn--light js-btn-reset"><span>reset form</span></button>
+                </div>
+            </form>
         </section>
-        <section class="content-wrapper js-content-wrapper"></section>
+
+        <section class="contents-wrapper js-contents-wrapper">
+            <span class="title title--contents">Contents</span>
+            <div class="contents-container js-contents-container"></div>
+        </section>
     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/choices.js@9.0.1/public/assets/scripts/choices.min.js"></script>
+    <script src="./app.js"></script>
 </body>
 </html>

@@ -1,0 +1,519 @@
+/* -------------------------------------------------------------------------- */
+/*                                  VARIABLES                                 */
+/* -------------------------------------------------------------------------- */
+
+/* --------------------------------- COLORS --------------------------------- */
+
+$white: #ffffff;
+$black: #000000;
+$blue: #0062B8;
+$lightBlue: #85C6FF;
+$beige: #FFD085;
+$yellow: #FFDA9E;
+$brown: #B38B4B;
+
+/* ---------------------------------- FONTS --------------------------------- */
+
+$baloo: 'Baloo 2', cursive;
+$balooDa: 'Baloo Da 2', cursive;
+
+/* ------------------------------- BREAKPOINTS ------------------------------ */
+
+$mobile: 480px;
+$max-sm: 767px;
+$content-width: 1300px;
+
+
+/* -------------------------------------------------------------------------- */
+/*                                   GLOBAL                                   */
+/* -------------------------------------------------------------------------- */
+
+html, body {
+    margin: 0;
+}
+
+body {
+    font-family: $baloo;
+    font-size: 16px;
+    line-height: 24px;
+    color: $white;
+    background-color: $blue;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+main {
+    flex-grow: 1;
+    max-width: 800px;
+    padding: 25px;
+    width: calc(100% - 50px);
+    margin: 0 auto;
+    position: relative;
+
+    @media all and (max-width: $max-sm) {
+        padding: 25px 12px;
+        width: calc(100% - 24px);
+    }
+}
+
+section {
+    width: 100%;
+}
+
+form {
+    margin-bottom: 35px;
+    padding: 22px;
+    border-radius: 6px;
+    border: solid 1px $white;
+    box-shadow: 0 0 10px -2px $white;
+    display: flex;
+    flex-direction: column;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+input {
+    appearance: none;
+    border-radius: 0;
+    background-color: transparent;
+    border: none;
+    border-bottom: solid 2px $white;
+    margin: 0 0 20px;
+    padding: 10px;
+    display: inline-block;
+    width: calc(100% - 20px);
+    color: $white;
+    font-size: inherit;
+    line-height: inherit;
+    outline: none;
+
+    &::placeholder {
+        color: $white;
+        font-size: inherit;
+    }
+}
+
+label {
+    text-transform: uppercase;
+}
+
+.input-field {
+    position: relative;
+
+    label {
+        position: absolute;
+        top: 24px;
+        left: 10px;
+        transition-duration: 0.3s;
+    }
+
+    input {
+        padding-top: 24px;
+
+        &:valid, &:focus {
+            & + label {
+                top: 0;
+                font-size: 12px;
+                line-height: 18px;
+            }
+        }
+    }
+}
+
+a {
+    text-decoration: none;
+    color: $white;
+}
+
+
+/* -------------------------------------------------------------------------- */
+/*                               SELECT CHOISES                               */
+/* -------------------------------------------------------------------------- */
+
+.choices {
+    &::after {
+        border-color: $white transparent transparent !important;
+        transition-duration: 0.3s;
+    }
+
+    &[data-type*=select-one].is-open::after {
+        margin-top: -2.5px !important;
+    }
+
+    &__inner {
+        border: solid 2px $white !important;
+        min-height: auto !important;
+        width: calc(100% - 19px) !important;
+        background-color: $lightBlue !important;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    &__list {
+        &--single {
+            width: calc(100% - 20px) !important;
+        }
+
+        &--dropdown {
+            z-index: 20 !important;
+            border: solid 2px $white !important;
+            border-top: 0 !important;
+            background-color: $lightBlue !important;
+            width: calc(100% - 4px) !important;
+            opacity: 0;
+            transition-duration: 0.3s;
+
+            &.is-active {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+    }
+
+    &__item {
+        font-size: 16px;
+        line-height: 24px;
+
+        &--choice {
+            background-color: $lightBlue !important;
+        }
+    }
+
+    &__placeholder {
+        &::placeholder {
+            content: "Search choices";
+        }
+
+        opacity: 0.8 !important;
+    }
+
+    &__input {
+        width: calc(100% - 20px) !important;
+        background-color: rgba($color: $blue, $alpha: 0.6) !important;
+    }
+}
+
+
+/* -------------------------------------------------------------------------- */
+/*                                   BUTTONS                                  */
+/* -------------------------------------------------------------------------- */
+
+.btn {
+    appearance: none;
+    cursor: pointer;
+    border: solid 2px $white;
+    border-radius: 4px;
+    padding: 12px 42px;
+    text-transform: uppercase;
+    font-size: inherit;
+    line-height: inherit;
+    font-weight: 600;
+    color: $white;
+    align-self: center;
+    position: relative;
+
+    &::after {
+        content: "";
+        position: absolute;
+        z-index: 0;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        transition-duration: 0.3s;
+    }
+
+    span {
+        position: relative;
+        z-index: 2;
+        transition-duration: 0.3s;
+    }
+
+    &.disabled {
+        opacity: 0.6;
+    }
+
+    /* BTN BLUE */
+    &--brown {
+        background-color: $brown;
+
+        &::after {
+            background-color: $yellow;
+        }
+
+        &:hover {
+            &::after {
+                width: 100%;
+            }
+
+            span {
+                color: $brown;
+            }
+        }
+    }
+
+    /* BTN LIGHT */
+    &--light {
+        background-color: $yellow;
+
+        &::after {
+            background-color: $brown;
+        }
+        
+        span {
+            color: $brown;
+        }
+
+        &:hover {
+            &::after {
+                width: 100%;
+            }
+
+            span {
+                color: $white;
+            }
+        }
+    }
+}
+
+.btn-logout {
+    position: absolute; 
+    top: 25px;
+    right: 25px;
+    text-transform: uppercase;
+    color: $white;
+    text-decoration: none; 
+    
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+
+/* -------------------------------------------------------------------------- */
+/*                                    TITLE                                   */
+/* -------------------------------------------------------------------------- */
+
+.title {
+    color: $beige;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: block;
+    text-align: center;
+
+    /* TITLE MAIN */
+    &--main {
+        margin-bottom: 30px;
+        font-size: 40px;
+        line-height: 42px;
+    }
+
+    /* TITLE TINY */
+    &--tiny {
+        margin-bottom: 30px;
+    }
+
+    /* TITLE FORM */
+    &--form {
+        margin-bottom: 22px;
+        font-size: 28px;
+        line-height: 30px;
+    }
+
+    /* TITLE CONTENTS */
+    &--contents {
+        padding-bottom: 16px;
+        margin-bottom: 26px;
+        font-size: 32px;
+        line-height: 36px;
+        position: relative;
+
+        &::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: $beige;
+        }
+    }
+
+    &--bookmarks {
+        margin-bottom: 12px;
+        font-size: 20px;
+        line-height: 26px;
+    }
+}
+
+
+/* -------------------------------------------------------------------------- */
+/*                                   STYLES                                   */
+/* -------------------------------------------------------------------------- */
+
+.forms {
+    max-width: 480px;
+    display: block;
+    margin: 0 auto 50px;
+
+    .buttons {
+        button:first-of-type {
+            margin-right: 10px;
+        }
+    }
+}
+
+
+/* -------------------------------------------------------------------------- */
+/*                                  BOOKMARKS                                 */
+/* -------------------------------------------------------------------------- */
+
+.bookmarks {
+    margin-bottom: 25px;
+
+    &__list {
+        padding: 12px 12px 4px;
+        border: solid 1px $white;
+        border-top: none;
+        display: flex;
+        flex-wrap: wrap;
+        min-height: 120px;
+
+        &__item {
+            display: flex;
+            border: solid 1px $white;
+            border-radius: 2px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+
+            > a {
+                padding: 6px 10px;
+                text-decoration: none;
+                background-color: transparent;
+                transition-duration: 0.3s;
+
+                &:hover {
+                    background-color: rgba($color: $brown, $alpha: 0.8);
+                }
+            }
+
+            button {
+                cursor: pointer;
+                appearance: none;
+                background-color: transparent;
+                border: none;
+                background-color: $brown;
+                align-self: stretch;
+                position: relative;
+                padding: 0;
+                width: 25px;
+                transition-duration: 0.3s;
+
+                &::before, &::after {
+                    content: "";
+                    position: absolute;
+                    top: calc(50% - 1px);
+                    left: calc(50% - 7px);
+                    height: 2px;
+                    width: 14px;
+                    background-color: $white;
+                }
+
+                &::before {
+                    transform: rotateZ(-45deg);
+                }
+
+                &::after {
+                    transform: rotateZ(45deg);
+                }
+
+                &:hover {
+                    background-color: transparent;
+                }
+            }
+        }
+    }
+}
+
+
+/* -------------------------------------------------------------------------- */
+/*                                  CONTENTS                                  */
+/* -------------------------------------------------------------------------- */
+
+.contents-container {
+    display: flex;
+    flex-direction: column;
+
+    &__item {
+        display: flex;
+        height: 380px;
+        border-bottom: solid 1px $white;
+        margin-bottom: 18px;
+
+        &:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .content-img {
+            width: 50%;
+            border: solid 1px $white;
+            border-bottom: 0;
+            
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+        }
+
+        .content-details {
+            width: calc(50% - 40px);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            overflow-y: scroll;
+
+            &__date, &__author {
+                padding: 6px 12px;
+                background-color: $beige;
+                text-transform: uppercase;
+                color: $brown;
+                font-weight: 600;
+                margin-bottom: 20px;
+            }
+
+            &__title {
+                text-transform: uppercase;
+                font-size: 20px;
+                line-height: 28px;
+                margin-bottom: 8px;
+            }
+
+            &__description {
+                margin-bottom: 25px;
+            }
+
+            > a {
+                position: relative;
+                text-transform: uppercase;
+                padding: 5px 10px;
+                font-weight: 600;
+                background-color: $brown;
+                transition-duration: 0.3s;
+
+                &:hover {
+                    background-color: $lightBlue;
+                    color: $white;
+                }
+            }
+        }
+    }
+}
