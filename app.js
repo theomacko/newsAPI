@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function renderLastSearch(sourceSearchId = null, keywordSearch = null) {
+    function renderSearch(sourceSearchId = null, keywordSearch = null) {
         if (sourceSearchId && !keywordSearch) {
             fetch(`${newsApiUrl}/top-headlines?sources=${sourceSearchId}&apiKey=${newsApiToken}`)
                 .then(res => res.json())
@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let searchSource = sessionObject.source;
             let searchKeyword = sessionObject.keyword;
 
-            renderLastSearch(searchSource, searchKeyword);
+            renderSearch(searchSource, searchKeyword);
         }
         else {
             console.log('no last search in session');
@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let searchIdSource = e.target.querySelector('select[name="source_search"] option').value;
         let searchKeyword = e.target.querySelector('input[name="keywords_search"]').value;
 
-        renderLastSearch(searchIdSource, searchKeyword);
+        renderSearch(searchIdSource, searchKeyword);
     })
 
     /* RESET FORM SEARCH */
@@ -411,6 +411,8 @@ document.addEventListener('DOMContentLoaded', () => {
             select.querySelector('option').value = selectedBookmark[0].id;
             select.querySelector('option').textContent = selectedBookmark[0].name;
             document.querySelector('.choices__item--selectable').textContent = selectedBookmark[0].name;
+
+            renderSearch(selectedBookmark[0].id)
         }
         else if (e.target.classList.contains('js-btn-delete-bookmark')) {
             fetch(`${teacherApiUrl}/bookmark/${e.target.dataset.sourceId}`, {
