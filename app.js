@@ -9,13 +9,19 @@ document.addEventListener('DOMContentLoaded', () => {
     let select = document.querySelector('.js-select-sources');
 
     // USER
+    let connected = false;
     let userDetails = document.querySelector('.js-user-details');
+
+    // SOURCES
+    let sourcesNews = [];
 
     // CONTENTS
     let contentsWrapper = document.querySelector('.js-contents-wrapper');
     let contentsList = document.querySelector('.js-contents-container');
 
     // BOOKMARKS
+    let bookmarksMe = [];
+    let btnAddBookmark = document.querySelector('.js-btn-add-bookmark');
     let bookmarksWrapper = document.querySelector('.js-bookmarks-wrapper');
     let bookmarksList = document.querySelector('.js-bookmarks-list');
 
@@ -88,11 +94,89 @@ document.addEventListener('DOMContentLoaded', () => {
         window.scrollTo(0, (window.scrollY + top) - 20);
     }
 
+    /* RENDER BOOKMARKS */
+    function renderBookmarks(bookmarks) {
+        bookmarksList.innerHTML = '';
+
+        bookmarks.forEach(({ _id, id, name }) => {
+            let elmt = document.createElement('div');
+            elmt.className = 'bookmarks__list__item';
+
+            let link = document.createElement('a');
+            link.className = 'js-btn-bookmark';
+            link.textContent = name;
+            link.dataset.sourceId = id;
+
+            let buttonElmt = document.createElement('button');
+            buttonElmt.className = 'js-btn-delete-bookmark';
+            buttonElmt.dataset.sourceId = _id;
+
+            elmt.append(link);
+            elmt.append(buttonElmt);
+            bookmarksList.append(elmt);
+        })
+    }
+
+    /* RENDER LAST SEARCH */
+    function addLastSearchItems(sourceSearchId = null, keywordSearch = null) {
+        if (!connected) {
+            let lastSearchDetails = {
+                source: sourceSearchId,
+                keyword: keywordSearch
+            };
+            sessionStorage.setItem('last_search_details', JSON.stringify(lastSearchDetails))
+        }
+    }
+
+    function renderLastSearch(sourceSearchId = null, keywordSearch = null) {
+        if (sourceSearchId && !keywordSearch) {
+            fetch(`${newsApiUrl}/top-headlines?sources=${sourceSearchId}&apiKey=${newsApiToken}`)
+                .then(res => res.json())
+                .then(({ status, articles }) => {
+                    if (status === 'ok') {
+                        renderArticles(articles);
+                        
+                        addLastSearchItems(sourceSearchId, keywordSearch);
+                    } else {
+                        console.log('error while fetching sources with id ' + sourceSearchId);
+                    }
+                })
+        }
+        else if (!sourceSearchId && keywordSearch) {
+            fetch(`${newsApiUrl}/top-headlines?q=${keywordSearch}&apiKey=${newsApiToken}`)
+                .then(res => res.json())
+                .then(({ status, articles }) => {
+                    if (status === 'ok') {
+                        renderArticles(articles);
+
+                        addLastSearchItems(sourceSearchId, keywordSearch);
+                    } else {
+                        console.log('error while fetching sources with keyword ' + sourceSearchId);
+                    }
+                })
+        }
+        else if (sourceSearchId && keywordSearch) {
+            fetch(`${newsApiUrl}/top-headlines?sources=${sourceSearchId}&q=${keywordSearch}&apiKey=${newsApiToken}`)
+                .then(res => res.json())
+                .then(({ status, articles }) => {
+                    if (status === 'ok') {
+                        renderArticles(articles);
+
+                        addLastSearchItems(sourceSearchId, keywordSearch);
+                    } else {
+                        console.log(`error while fetching sources with id ${sourceSearchId} and keyword ${keywordSearch}`);
+                    }
+                })
+        }
+    }
+
     /* GET SOURCES */
     fetch(`${newsApiUrl}/sources?apiKey=${newsApiToken}`)
         .then(res => res.json())
         .then(({ status, sources }) => {
             if (status === 'ok') {
+                sourcesNews = sources;
+
                 sources.forEach(({ id, name }) => {
                     let elmt = document.createElement('option');
                     elmt.value = id;
@@ -102,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
 
                 new Choices(select)
-                bookmarksList.style.display = 'block';
+                bookmarksList.style.display = 'flex';
             } else {
                 console.log('error while fetching sources !');
             }
@@ -113,6 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formRegister.style.display = 'none';
         formLogin.style.display = 'none';
         bookmarksWrapper.style.display = "block";
+        connected = true;
 
         fetch(`${teacherApiUrl}/me`, {
             method: 'POST',
@@ -129,13 +214,28 @@ document.addEventListener('DOMContentLoaded', () => {
                     sessionStorage.setItem('firstname', data.user.firstname);
                     sessionStorage.setItem('lastname', data.user.lastname);
 
-                    userDetails.textContent = `
+                    bookmarksMe = data.bookmark;
+                    renderBookmarks(bookmarksMe);
+
+                    userDetails.querySelector('p').textContent = `
                         user - ${sessionStorage.getItem('firstname')} ${sessionStorage.getItem('lastname')}
                     `;
 
                     userDetails.style.display = 'block';
                 }
             })
+    }
+    else {
+        if (sessionStorage.getItem('last_search_details')) {
+            let sessionObject = JSON.parse(sessionStorage.getItem('last_search_details'));
+            let searchSource = sessionObject.source;
+            let searchKeyword = sessionObject.keyword;
+
+            renderLastSearch(searchSource, searchKeyword);
+        }
+        else {
+            console.log('no last search in session');
+        }
     }
 
     /* GET SEARCHED SOURCES */
@@ -145,46 +245,15 @@ document.addEventListener('DOMContentLoaded', () => {
         let searchIdSource = e.target.querySelector('select[name="source_search"] option').value;
         let searchKeyword = e.target.querySelector('input[name="keywords_search"]').value;
 
-        if (searchIdSource && !searchKeyword) {
-            fetch(`${newsApiUrl}/top-headlines?sources=${searchIdSource}&apiKey=${newsApiToken}`)
-                .then(res => res.json())
-                .then(({ status, articles }) => {
-                    if (status === 'ok') {
-                        renderArticles(articles);
-                    } else {
-                        console.log('error while fetching sources with id ' + searchIdSource);
-                    }
-                })
-        }
-        else if (!searchIdSource && searchKeyword) {
-            fetch(`${newsApiUrl}/top-headlines?q=${searchKeyword}&apiKey=${newsApiToken}`)
-                .then(res => res.json())
-                .then(({ status, articles }) => {
-                    if (status === 'ok') {
-                        renderArticles(articles);
-                    } else {
-                        console.log('error while fetching sources with keyword ' + searchIdSource);
-                    }
-                })
-        }
-        else if (searchIdSource && searchKeyword) {
-            fetch(`${newsApiUrl}/top-headlines?sources=${searchIdSource}&q=${searchKeyword}&apiKey=${newsApiToken}`)
-                .then(res => res.json())
-                .then(({ status, articles }) => {
-                    if (status === 'ok') {
-                        renderArticles(articles);
-                    } else {
-                        console.log(`error while fetching sources with id ${searchIdSource} and keyword ${searchKeyWord}`);
-                    }
-                })
-        }
+        renderLastSearch(searchIdSource, searchKeyword);
     })
 
     /* RESET FORM SEARCH */
     btnReset.addEventListener('click', e => {
         e.preventDefault();
 
-        formSearch.reset()
+        btnAddBookmark.classList.remove('visible');
+        formSearch.reset();
     })
 
     /* REGISTER */
@@ -272,11 +341,94 @@ document.addEventListener('DOMContentLoaded', () => {
                     sessionStorage.removeItem('firstname');
                     sessionStorage.removeItem('lastname');
 
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1000);
+                    window.location.reload();
                 }
             })
+    })
+
+    /* BOOKMARKS */
+    let newBookmark;
+
+    select.addEventListener('change', e => {
+        if (connected) {
+            let currentChoice = e.target.querySelector('option').value;
+            newBookmark = currentChoice;
+
+            // SHOW BTN ADD
+            let inBookmark = bookmarksMe.filter(item => {
+                return currentChoice === (item ? item.id : '');
+            })
+
+            if (inBookmark.length > 0) {
+                if (btnAddBookmark.classList.contains('visible')) {
+                    btnAddBookmark.classList.remove('visible');
+                }
+            }
+            else {
+                if (!btnAddBookmark.classList.contains('visible')) {
+                    btnAddBookmark.classList.add('visible');
+                }
+            }
+        }
+    })
+
+    btnAddBookmark.addEventListener('click', e => {
+        e.preventDefault();
+
+        let bookmarkToAdd = sourcesNews.filter(({ id }) => {
+            return newBookmark === id;
+        })
+
+        let formData = {...bookmarkToAdd[0], token: sessionStorage.getItem('session_token')};
+
+        fetch(`${teacherApiUrl}/bookmark/`, {
+            method: 'POST',
+            body: JSON.stringify(formData),
+            headers: {
+                'content-type': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(({ err, data }) => {
+                if (err) {
+                    console.log(err);
+                } else {
+                    bookmarksMe = [...bookmarksMe, data.data];
+                    renderBookmarks(bookmarksMe);
+                    btnAddBookmark.classList.remove('visible');
+                }
+            })
+    })
+
+    document.addEventListener('click', e => {
+        if (e.target.classList.contains('js-btn-bookmark')) {
+            e.preventDefault();
+
+            let selectedBookmark = bookmarksMe.filter(({ id }) => {
+                return e.target.dataset.sourceId === id;
+            })
+
+            select.querySelector('option').value = selectedBookmark[0].id;
+            select.querySelector('option').textContent = selectedBookmark[0].name;
+            document.querySelector('.choices__item--selectable').textContent = selectedBookmark[0].name;
+        }
+        else if (e.target.classList.contains('js-btn-delete-bookmark')) {
+            fetch(`${teacherApiUrl}/bookmark/${e.target.dataset.sourceId}`, {
+                method: 'DELETE',
+                body: JSON.stringify({ token: sessionStorage.getItem('session_token') }),
+                headers: {
+                    'content-type': 'application/json'
+                }
+            })
+                .then(res => res.json())
+                .then(({ err, data }) => {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        window.location.reload()
+                    }
+                })
+        }
     })
 
 });
